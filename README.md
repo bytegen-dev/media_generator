@@ -1,8 +1,8 @@
 # Text to Media Generator
 
-A powerful Next.js application that generates media (images, videos, audio) using multiple AI engines with a beautiful, modern interface.
+(WIP)
 
-![Text to Media Generator](public/logo.png)
+<img width="1367" height="1197" alt="image" src="https://github.com/user-attachments/assets/95d09475-12d3-4118-b19c-7e8c287f36de" />
 
 ## Features
 
