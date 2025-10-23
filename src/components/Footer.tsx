@@ -25,7 +25,7 @@ export function Footer() {
               <span className="text-sm">GitHub</span>
             </a>
             <a
-              href="https://x.com/isaacadebayo"
+              href="https://x.com/bytegen_dev"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
@@ -34,7 +34,7 @@ export function Footer() {
               <span className="text-sm">X/Twitter</span>
             </a>
             <a
-              href="https://isaacadebayo.dev"
+              href="https://bytegen.dev"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"

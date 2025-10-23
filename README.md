@@ -240,11 +240,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Author
 
-**Isaac Adebayo**
+**Bytegen**
 
 - GitHub: [@bytegen-dev](https://github.com/bytegen-dev)
-- Twitter: [@isaacadebayo](https://x.com/isaacadebayo)
-- Website: [isaacadebayo.dev](https://isaacadebayo.dev)
+- Twitter: [@bytegen_dev](https://x.com/bytegen_dev)
+- Website: [bytegen.dev](https://bytegen.dev)
 
 ## Acknowledgments
 
