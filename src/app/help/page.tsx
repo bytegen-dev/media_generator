@@ -23,6 +23,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
+import DecryptedText from "@/components/DecryptedText";
 
 export default function HelpPage() {
   return (
@@ -31,7 +32,18 @@ export default function HelpPage() {
       <div className="text-center space-y-4">
         <div className="flex items-center justify-center space-x-2">
           <HelpCircle className="h-6 w-6 text-primary" />
-          <h1 className="text-3xl font-bold">Help Center</h1>
+          <h1 className="text-3xl font-bold">
+            <DecryptedText
+              text="Help_Center"
+              speed={100}
+              maxIterations={20}
+              characters="ABCD1234!?"
+              className="revealed"
+              parentClassName="all-letters"
+              encryptedClassName="encrypted"
+              animateOn="both"
+            />
+          </h1>
         </div>
         <p className="text-xl text-muted-foreground">
           Everything you need to know about using the Text to Media Generator
@@ -42,7 +54,6 @@ export default function HelpPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Zap className="h-5 w-5 text-yellow-500" />
             <span>Quick Start Guide</span>
           </CardTitle>
           <CardDescription>
@@ -103,7 +114,6 @@ export default function HelpPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Image className="h-5 w-5 text-blue-500" />
             <span>AI Engines</span>
           </CardTitle>
           <CardDescription>
@@ -115,7 +125,6 @@ export default function HelpPage() {
             {/* Free Engines */}
             <div>
               <h3 className="font-semibold mb-3 flex items-center space-x-2">
-                <CheckCircle className="h-4 w-4 text-green-500" />
                 <span>Free Engines (No API Key Required)</span>
               </h3>
               <div className="grid md:grid-cols-2 gap-3">
@@ -143,7 +152,6 @@ export default function HelpPage() {
             {/* Premium Engines */}
             <div>
               <h3 className="font-semibold mb-3 flex items-center space-x-2">
-                <Key className="h-4 w-4 text-amber-500" />
                 <span>Premium Engines (API Key Required)</span>
               </h3>
               <div className="grid md:grid-cols-2 gap-3">
@@ -193,7 +201,6 @@ export default function HelpPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Video className="h-5 w-5 text-purple-500" />
             <span>Media Types</span>
           </CardTitle>
           <CardDescription>Supported media generation types</CardDescription>
@@ -238,7 +245,6 @@ export default function HelpPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Settings className="h-5 w-5 text-orange-500" />
             <span>API Keys Setup</span>
           </CardTitle>
           <CardDescription>
@@ -301,7 +307,6 @@ export default function HelpPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <AlertTriangle className="h-5 w-5 text-red-500" />
             <span>Troubleshooting</span>
           </CardTitle>
           <CardDescription>Common issues and solutions</CardDescription>

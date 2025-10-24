@@ -5,6 +5,7 @@ import { ImageGeneratorForm } from "@/components/ImageGeneratorForm";
 import { ResultsGrid } from "@/components/ResultsGrid";
 import { useImageGeneration } from "@/hooks/useImageGeneration";
 import { type GenerationForm } from "@/types";
+import DecryptedText from "@/components/DecryptedText";
 
 export default function Home() {
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -22,7 +23,19 @@ export default function Home() {
   return (
     <div className="max-w-7xl mx-auto">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-4">Media_Generator</h1>
+        <h1 className="text-4xl font-bold mb-4">
+          <DecryptedText
+            text="Media_Generator"
+            speed={100}
+            maxIterations={20}
+            characters="ABCD1234!?"
+            className="revealed"
+            parentClassName="all-letters"
+            encryptedClassName="encrypted"
+            animateOn="both"
+          />
+        </h1>
+
         <p className="text-muted-foreground text-lg">
           Generate media (images, videos, audio) using multiple AI engines
         </p>
