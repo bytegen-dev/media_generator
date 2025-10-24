@@ -9,6 +9,30 @@ export function useImageGeneration() {
     {}
   );
 
+  const pollForResults = useCallback(async (sessionId: string) => {
+    const pollInterval = setInterval(async () => {
+      try {
+        const response = await fetch(`/api/generate?sessionId=${sessionId}`);
+        const data = await response.json();
+
+        setResults(data.results || []);
+        setLoadingStates(data.loadingStates || {});
+
+        if (data.completed) {
+          clearInterval(pollInterval);
+        }
+      } catch (error) {
+        console.error("Polling error:", error);
+        clearInterval(pollInterval);
+      }
+    }, 2000);
+
+    // Cleanup after 5 minutes
+    setTimeout(() => {
+      clearInterval(pollInterval);
+    }, 300000);
+  }, []);
+
   const generateImages = useCallback(
     async (formData: GenerationForm): Promise<string> => {
       try {
@@ -47,30 +71,6 @@ export function useImageGeneration() {
     },
     [pollForResults]
   );
-
-  const pollForResults = useCallback(async (sessionId: string) => {
-    const pollInterval = setInterval(async () => {
-      try {
-        const response = await fetch(`/api/generate?sessionId=${sessionId}`);
-        const data = await response.json();
-
-        setResults(data.results || []);
-        setLoadingStates(data.loadingStates || {});
-
-        if (data.completed) {
-          clearInterval(pollInterval);
-        }
-      } catch (error) {
-        console.error("Polling error:", error);
-        clearInterval(pollInterval);
-      }
-    }, 2000);
-
-    // Cleanup after 5 minutes
-    setTimeout(() => {
-      clearInterval(pollInterval);
-    }, 300000);
-  }, []);
 
   const clearResults = useCallback(() => {
     setResults([]);

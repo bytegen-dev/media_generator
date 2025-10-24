@@ -85,7 +85,6 @@ export function ImageGeneratorForm({
       const storedKeys = localStorage.getItem("apiKeys");
       if (storedKeys) {
         const parsedKeys = JSON.parse(storedKeys);
-        console.log("Loaded keys from localStorage:", parsedKeys);
         setKeys(parsedKeys);
       }
     };
@@ -116,7 +115,6 @@ export function ImageGeneratorForm({
   }, []);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log("Submitting with keys:", keys);
     onSubmit({
       ...values,
       keys,
