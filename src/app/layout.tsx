@@ -30,10 +30,14 @@ export default function RootLayout({
             asciiFontSize={8}
           />
         </div>
-        <div className="min-h-screen bg-background/10 z-10 relative flex flex-col">
-          <Navigation />
-          <main className="container mx-auto px-4 py-8 flex-1">{children}</main>
-          <Footer />
+        <div className="fixed top-0 left-0 w-full h-full z-10">
+          <div className="min-h-screen bg-background/10 relative flex flex-col">
+            <Navigation />
+            <main className="container mx-auto px-4 py-8 flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
         </div>
       </body>
     </html>
