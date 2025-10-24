@@ -239,13 +239,15 @@ export function SettingsForm({ focusKey }: { focusKey?: string | null }) {
                       </Label>
                       <Badge
                         variant={
-                          getKeyStatus(form.watch(engine.apiKeyField as keyof SettingsForm))
-                            .variant
+                          getKeyStatus(
+                            form.watch(engine.apiKeyField as keyof SettingsForm)
+                          ).variant
                         }
                       >
                         {
-                          getKeyStatus(form.watch(engine.apiKeyField as keyof SettingsForm))
-                            .text
+                          getKeyStatus(
+                            form.watch(engine.apiKeyField as keyof SettingsForm)
+                          ).text
                         }
                       </Badge>
                     </div>
@@ -253,7 +255,9 @@ export function SettingsForm({ focusKey }: { focusKey?: string | null }) {
                       id={engine.apiKeyField}
                       type="password"
                       placeholder={engine.placeholder}
-                      {...form.register(engine.apiKeyField as keyof SettingsForm)}
+                      {...form.register(
+                        engine.apiKeyField as keyof SettingsForm
+                      )}
                     />
                     <p className="text-xs text-muted-foreground">
                       {engine.description && `${engine.description}. `}

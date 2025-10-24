@@ -1,5 +1,5 @@
-import { useRef, useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
+import { useRef, useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface Tab {
   name: string;
@@ -23,7 +23,7 @@ export function Tabs({ tabs, activeTab, onTabChange, className }: TabsProps) {
   useEffect(() => {
     const activeIndex = tabs.findIndex((tab) => tab.name === activeTab);
     const activeTabElement = tabsRef.current[activeIndex];
-    
+
     if (activeTabElement) {
       setIndicatorStyle({
         left: activeTabElement.offsetLeft,
@@ -33,7 +33,7 @@ export function Tabs({ tabs, activeTab, onTabChange, className }: TabsProps) {
   }, [activeTab, tabs]);
 
   return (
-    <div className={cn('flex gap-6 border-b relative', className)}>
+    <div className={cn("flex gap-6 border-b relative", className)}>
       <div
         className="absolute bottom-0 h-0.5 bg-primary transition-all duration-300 ease-out"
         style={{
@@ -49,8 +49,8 @@ export function Tabs({ tabs, activeTab, onTabChange, className }: TabsProps) {
           }}
           onClick={() => onTabChange(tab.name)}
           className={cn(
-            'pb-4 relative text-sm transition-colors duration-200',
-            activeTab === tab.name ? 'text-primary' : 'text-muted-foreground',
+            "pb-4 relative text-sm transition-colors duration-200",
+            activeTab === tab.name ? "text-primary" : "text-muted-foreground"
           )}
         >
           <div className="flex items-center gap-2">
