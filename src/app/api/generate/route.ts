@@ -82,9 +82,10 @@ async function processEnginesAsync(
   const session = sessions.get(sessionId);
   if (!session) return;
 
-  // Process each engine
-  for (const engine of engines) {
+  // Process engines in parallel using Promise.allSettled
+  const enginePromises = engines.map(async (engine) => {
     try {
+      console.log(`Starting generation for engine: ${engine}`);
       const result = await generateImage(engine, prompt, size, numImages, keys);
 
       // Update session with result
@@ -96,7 +97,9 @@ async function processEnginesAsync(
 
       // Mark engine as completed
       session.loadingStates[engine] = false;
+      console.log(`Completed generation for engine: ${engine}`);
     } catch (error) {
+      console.error(`Error in engine ${engine}:`, error);
       // Handle error
       session.results.push({
         engine,
@@ -105,8 +108,12 @@ async function processEnginesAsync(
 
       session.loadingStates[engine] = false;
     }
-  }
+  });
+
+  // Wait for all engines to complete (or fail)
+  await Promise.allSettled(enginePromises);
 
   // Mark session as completed
   session.completed = true;
+  console.log(`Session ${sessionId} completed`);
 }

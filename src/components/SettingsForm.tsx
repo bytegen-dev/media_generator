@@ -332,8 +332,8 @@ export function SettingsForm({ focusKey }: { focusKey?: string | null }) {
               <div className="text-sm text-blue-800 dark:text-blue-200">
                 <p className="font-medium">Free Engines Available</p>
                 <p>
-                  Pollinations.AI and AI Horde work without API keys. You can
-                  start generating media immediately!
+                  Pollinations.AI works without API keys. You can start
+                  generating media immediately!
                 </p>
               </div>
             </div>

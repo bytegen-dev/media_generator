@@ -38,9 +38,6 @@ export async function generateImage(
       case "huggingface":
         return await generateWithHuggingFace(prompt, size, keys.huggingface);
 
-      case "aihorde":
-        return await generateWithAIHorde(prompt, size);
-
       case "gemini":
         return await generateWithGemini(prompt, keys.gemini);
 
@@ -147,66 +144,6 @@ async function generateWithHuggingFace(
   const blob = await response.blob();
   const imageUrl = URL.createObjectURL(blob);
   return { imageUrl };
-}
-
-// AI Horde - Free
-async function generateWithAIHorde(
-  prompt: string,
-  size: string
-): Promise<ImageResult> {
-  const [width, height] = size.split("x").map(Number);
-
-  // Submit generation request
-  const submitResponse = await fetch(
-    "https://stablehorde.net/api/v2/generate/async",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt,
-        params: {
-          width,
-          height,
-          steps: 20,
-          cfg_scale: 7.5,
-        },
-        apikey: "0000000000", // Anonymous key
-      }),
-    }
-  );
-
-  if (!submitResponse.ok) {
-    throw new Error("AI Horde submission failed");
-  }
-
-  const { id } = await submitResponse.json();
-
-  // Poll for completion
-  let attempts = 0;
-  const maxAttempts = 30; // 1 minute timeout
-
-  while (attempts < maxAttempts) {
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds
-
-    const statusResponse = await fetch(
-      `https://stablehorde.net/api/v2/generate/status/${id}`
-    );
-    const status = await statusResponse.json();
-
-    if (status.done) {
-      if (status.generations && status.generations.length > 0) {
-        return { imageUrl: status.generations[0].img };
-      } else {
-        throw new Error("No images generated");
-      }
-    }
-
-    attempts++;
-  }
-
-  throw new Error("AI Horde generation timeout");
 }
 
 // Google Gemini

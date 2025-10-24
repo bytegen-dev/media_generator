@@ -20,14 +20,6 @@ export const AVAILABLE_ENGINES: readonly Engine[] = [
     description: "Free AI image generation",
   },
   {
-    id: "aihorde",
-    name: "AI Horde",
-    requiresKey: false,
-    free: true,
-    mediaTypes: ["images"] as const,
-    description: "Community-driven AI image generation",
-  },
-  {
     id: "xai",
     name: "xAI Grok",
     requiresKey: true,

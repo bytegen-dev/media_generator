@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, Github, Globe } from "lucide-react";
 import { FaXTwitter } from "react-icons/fa6";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export function Navigation() {
   const router = useRouter();
@@ -51,9 +52,9 @@ export function Navigation() {
       <nav className="border-b bg-background/95 backdrop-blur px-4 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container max-w-7xl mx-auto">
           <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center space-x-2">
+            <Link href="/" className="flex items-center space-x-2">
               <span className="text-xl font-bold">TTM_G</span>
-            </div>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:block">
