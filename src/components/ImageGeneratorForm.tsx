@@ -14,7 +14,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -25,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Key, Zap, Settings } from "lucide-react";
+import { AlertTriangle, Key, Zap } from "lucide-react";
 import { AVAILABLE_ENGINES } from "@/constants/engines";
 import { IMAGE_SIZES, type GenerationForm } from "@/types";
 
@@ -82,10 +81,6 @@ export function ImageGeneratorForm({
   };
 
   const selectedEngines = form.watch("engines");
-  const enginesWithKeys = selectedEngines.filter((engine) => {
-    const engineConfig = AVAILABLE_ENGINES.find((e) => e.id === engine);
-    return engineConfig?.requiresKey && keys[engineConfig.id];
-  });
   const enginesWithoutKeys = selectedEngines.filter((engine) => {
     const engineConfig = AVAILABLE_ENGINES.find((e) => e.id === engine);
     return engineConfig?.requiresKey && !keys[engineConfig.id];

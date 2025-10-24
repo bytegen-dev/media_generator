@@ -221,8 +221,7 @@ async function generateWithGemini(
   const genAI = getGeminiClient(apiKey);
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
+  await model.generateContent(prompt);
 
   // Note: Gemini doesn't generate images directly, this would need to be adapted
   // For now, return an error as this needs special handling

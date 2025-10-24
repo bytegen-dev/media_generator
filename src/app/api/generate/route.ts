@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { NextRequest, NextResponse } from "next/server";
 import { generateImage } from "@/lib/imageEngines";
 
@@ -47,7 +45,7 @@ export async function POST(request: NextRequest) {
     processEnginesAsync(sessionId, engines, prompt, size, numImages, keys);
 
     return NextResponse.json({ sessionId });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to start image generation" },
       { status: 500 }

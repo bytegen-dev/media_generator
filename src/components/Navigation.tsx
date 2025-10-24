@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, Github, Globe } from "lucide-react";
 import { FaXTwitter } from "react-icons/fa6";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 
 export function Navigation() {
   const router = useRouter();
@@ -17,13 +16,16 @@ export function Navigation() {
 
   // Update active tab based on current path
   useEffect(() => {
-    if (pathname === "/") {
-      setActiveTab("Home");
-    } else if (pathname === "/settings") {
-      setActiveTab("Settings");
-    } else if (pathname === "/help") {
-      setActiveTab("Help");
-    }
+    const updateActiveTab = () => {
+      if (pathname === "/") {
+        setActiveTab("Home");
+      } else if (pathname === "/settings") {
+        setActiveTab("Settings");
+      } else if (pathname === "/help") {
+        setActiveTab("Help");
+      }
+    };
+    updateActiveTab();
   }, [pathname]);
 
   const tabs = [{ name: "Home" }, { name: "Settings" }, { name: "Help" }];

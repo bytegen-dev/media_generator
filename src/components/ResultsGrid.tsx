@@ -32,26 +32,31 @@ export function ResultsGrid({
   useEffect(() => {
     if (!sessionId || polling) return;
 
-    setPolling(true);
-    const pollInterval = setInterval(async () => {
-      try {
-        const response = await fetch(`/api/generate?sessionId=${sessionId}`);
-        const data = await response.json();
+    const startPolling = () => {
+      setPolling(true);
+      const pollInterval = setInterval(async () => {
+        try {
+          const response = await fetch(`/api/generate?sessionId=${sessionId}`);
+          const data = await response.json();
 
-        if (data.completed) {
-          clearInterval(pollInterval);
-          setPolling(false);
+          if (data.completed) {
+            clearInterval(pollInterval);
+            setPolling(false);
+          }
+        } catch (error) {
+          console.error("Polling error:", error);
         }
-      } catch (error) {
-        console.error("Polling error:", error);
-      }
-    }, 2000);
+      }, 2000);
 
-    return () => {
-      clearInterval(pollInterval);
-      setPolling(false);
+      return () => {
+        clearInterval(pollInterval);
+        setPolling(false);
+      };
     };
-  }, [sessionId]);
+
+    const cleanup = startPolling();
+    return cleanup;
+  }, [sessionId, polling]);
 
   const downloadImage = async (url: string, engine: string) => {
     try {
@@ -60,7 +65,7 @@ export function ResultsGrid({
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.download = `${engine}-${Date.now()}.png`;
+      link.download = `${engine}-image.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Separator } from "@/components/ui/separator";
 import { CheckCircle, Key, AlertTriangle, Search, Trash2 } from "lucide-react";
-import { AVAILABLE_ENGINES, getEnginesByMediaType } from "@/constants/engines";
+import { AVAILABLE_ENGINES } from "@/constants/engines";
 
 const settingsSchema = z.object({
   xaiKey: z.string().optional(),
@@ -239,12 +239,12 @@ export function SettingsForm({ focusKey }: { focusKey?: string | null }) {
                       </Label>
                       <Badge
                         variant={
-                          getKeyStatus(form.watch(engine.apiKeyField as any))
+                          getKeyStatus(form.watch(engine.apiKeyField as keyof SettingsForm))
                             .variant
                         }
                       >
                         {
-                          getKeyStatus(form.watch(engine.apiKeyField as any))
+                          getKeyStatus(form.watch(engine.apiKeyField as keyof SettingsForm))
                             .text
                         }
                       </Badge>
@@ -253,7 +253,7 @@ export function SettingsForm({ focusKey }: { focusKey?: string | null }) {
                       id={engine.apiKeyField}
                       type="password"
                       placeholder={engine.placeholder}
-                      {...form.register(engine.apiKeyField as any)}
+                      {...form.register(engine.apiKeyField as keyof SettingsForm)}
                     />
                     <p className="text-xs text-muted-foreground">
                       {engine.description && `${engine.description}. `}

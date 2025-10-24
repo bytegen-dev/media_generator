@@ -17,8 +17,6 @@ import {
   Image,
   Video,
   Music,
-  Download,
-  ExternalLink,
   AlertTriangle,
   CheckCircle,
   Info,
@@ -105,7 +103,7 @@ export default function HelpPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Image className="h-5 w-5 text-blue-500" />
+            <Image className="h-5 w-5 text-blue-500" alt="AI Engines icon" />
             <span>AI Engines</span>
           </CardTitle>
           <CardDescription>
@@ -164,7 +162,7 @@ export default function HelpPage() {
                     <Badge variant="outline">Premium</Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Google's AI image generation
+                    Google&apos;s AI image generation
                   </p>
                 </div>
                 <div className="p-3 border rounded-lg">
@@ -173,7 +171,7 @@ export default function HelpPage() {
                     <Badge variant="outline">Premium</Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    xAI's advanced image generation
+                    xAI&apos;s advanced image generation
                   </p>
                 </div>
                 <div className="p-3 border rounded-lg">
@@ -203,7 +201,7 @@ export default function HelpPage() {
         <CardContent>
           <div className="grid md:grid-cols-3 gap-4">
             <div className="text-center p-4 border rounded-lg">
-              <Image className="h-8 w-8 mx-auto mb-2 text-blue-500" />
+                <Image className="h-8 w-8 mx-auto mb-2 text-blue-500" alt="Images icon" />
               <h3 className="font-semibold">Images</h3>
               <p className="text-sm text-muted-foreground">
                 Generate high-quality images from text prompts
@@ -213,7 +211,7 @@ export default function HelpPage() {
               </Badge>
             </div>
             <div className="text-center p-4 border rounded-lg opacity-50">
-              <Video className="h-8 w-8 mx-auto mb-2 text-purple-500" />
+                <Video className="h-8 w-8 mx-auto mb-2 text-purple-500" alt="Videos icon" />
               <h3 className="font-semibold">Videos</h3>
               <p className="text-sm text-muted-foreground">
                 Generate videos from text prompts
@@ -223,7 +221,7 @@ export default function HelpPage() {
               </Badge>
             </div>
             <div className="text-center p-4 border rounded-lg opacity-50">
-              <Music className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                <Music className="h-8 w-8 mx-auto mb-2 text-green-500" alt="Audio icon" />
               <h3 className="font-semibold">Audio</h3>
               <p className="text-sm text-muted-foreground">
                 Generate audio from text prompts
@@ -336,12 +334,12 @@ export default function HelpPage() {
             <div>
               <h3 className="font-semibold mb-2">API Key Issues</h3>
               <p className="text-sm text-muted-foreground mb-2">
-                If engines show "Key Required":
+                If engines show &quot;Key Required&quot;:
               </p>
               <ul className="text-sm text-muted-foreground space-y-1 ml-4">
                 <li>• Go to Settings and add your API key</li>
                 <li>• Ensure the key is valid and has sufficient credits</li>
-                <li>• Check the service's documentation for key format</li>
+                <li>• Check the service&apos;s documentation for key format</li>
               </ul>
             </div>
           </div>
