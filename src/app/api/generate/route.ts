@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { NextRequest, NextResponse } from "next/server";
 import { generateImage } from "@/lib/imageEngines";
 
@@ -27,7 +29,10 @@ export async function POST(request: NextRequest) {
     sessions.set(sessionId, {
       results: [],
       loadingStates: engines.reduce(
-        (acc, engine) => ({ ...acc, [engine]: true }),
+        (acc: Record<string, boolean>, engine: string) => ({
+          ...acc,
+          [engine]: true,
+        }),
         {}
       ),
       completed: false,

@@ -306,7 +306,7 @@ async function generateWithOpenAI(
     size: "1024x1024",
   });
 
-  return { imageUrl: response.data[0]?.url };
+  return { imageUrl: response.data?.[0]?.url };
 }
 
 // Midjourney via Apiframe

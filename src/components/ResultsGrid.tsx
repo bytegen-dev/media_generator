@@ -11,7 +11,8 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
-import { AVAILABLE_ENGINES, type EngineResult } from "@/types";
+import { AVAILABLE_ENGINES } from "@/constants/engines";
+import { type EngineResult } from "@/types";
 import Image from "next/image";
 
 interface ResultsGridProps {
