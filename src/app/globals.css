@@ -130,3 +130,8 @@
     scrollbar-width: none;
   }
 }
+
+::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}

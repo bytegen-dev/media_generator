@@ -72,9 +72,15 @@ export function useImageGeneration() {
     }, 300000);
   }, []);
 
+  const clearResults = useCallback(() => {
+    setResults([]);
+    setLoadingStates({});
+  }, []);
+
   return {
     results,
     loadingStates,
     generateImages,
+    clearResults,
   };
 }

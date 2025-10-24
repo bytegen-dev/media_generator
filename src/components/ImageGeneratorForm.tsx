@@ -13,7 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -24,9 +23,11 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Key, Zap } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { AlertTriangle, Key, X, Zap } from "lucide-react";
 import { AVAILABLE_ENGINES } from "@/constants/engines";
 import { IMAGE_SIZES, type GenerationForm } from "@/types";
+import { PromptSuggestions } from "@/components/PromptSuggestions";
 
 const MEDIA_TYPES = [
   { id: "images", name: "Images", isDisabled: false },
@@ -44,8 +45,10 @@ const formSchema = z.object({
 
 export function ImageGeneratorForm({
   onSubmit,
+  loading = false,
 }: {
   onSubmit: (data: GenerationForm) => void;
+  loading?: boolean;
 }) {
   const [keys, setKeys] = useState<Record<string, string>>({});
   const router = useRouter();
@@ -76,8 +79,12 @@ export function ImageGeneratorForm({
     });
   };
 
-  const navigateToSettings = (engineId: string) => {
-    router.push(`/settings?focus=${engineId}`);
+  const navigateToSettings = (engineId?: string) => {
+    if (engineId) {
+      router.push(`/settings?focus=${engineId}`);
+    } else {
+      router.push("/settings");
+    }
   };
 
   const selectedEngines = form.watch("engines");
@@ -143,73 +150,144 @@ export function ImageGeneratorForm({
             )}
           </div>
 
+          <Separator className="my-6" />
+
+          {/* Prompt Suggestions */}
+          <PromptSuggestions
+            onPromptSelect={(prompt) => form.setValue("prompt", prompt)}
+            className="mt-4"
+          />
+
+          <Separator className="my-6" />
+
           {/* Engine Selection */}
           <div className="space-y-3">
             <Label>AI Engines</Label>
-            <div className="grid grid-cols-1 gap-3">
-              {AVAILABLE_ENGINES.map((engine) => {
-                const hasKey = keys[engine.id];
-                const isSelected = selectedEngines.includes(engine.id);
-                const canSelect = !engine.requiresKey || hasKey;
+            <div className="space-y-2">
+              <Select
+                value=""
+                onValueChange={(engineId) => {
+                  if (engineId && !selectedEngines.includes(engineId)) {
+                    form.setValue("engines", [...selectedEngines, engineId]);
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Add an AI engine..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {AVAILABLE_ENGINES.map((engine) => {
+                    const hasKey = keys[engine.id];
+                    const canSelect = !engine.requiresKey || hasKey;
+                    const isAlreadySelected = selectedEngines.includes(
+                      engine.id
+                    );
 
-                return (
-                  <div key={engine.id} className="flex items-center space-x-3">
-                    <Checkbox
-                      id={engine.id}
-                      checked={isSelected}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          form.setValue("engines", [
-                            ...selectedEngines,
-                            engine.id,
-                          ]);
-                        } else {
-                          form.setValue(
-                            "engines",
-                            selectedEngines.filter((e) => e !== engine.id)
-                          );
-                        }
-                      }}
-                      disabled={!canSelect}
-                    />
-                    <div className="flex-1">
-                      <Label
-                        htmlFor={engine.id}
-                        className="flex items-center space-x-2"
+                    return (
+                      <SelectItem
+                        key={engine.id}
+                        value={engine.id}
+                        disabled={!canSelect || isAlreadySelected}
                       >
-                        <span>{engine.name}</span>
-                        {engine.free && (
-                          <Badge variant="secondary" className="text-xs">
-                            Free
-                          </Badge>
-                        )}
-                        {engine.requiresKey && !hasKey && (
-                          <div className="group relative">
-                            <Badge
-                              variant="destructive"
-                              className="text-xs cursor-pointer hover:bg-destructive/80 transition-colors"
-                              onClick={() => navigateToSettings(engine.id)}
-                            >
+                        <div className="flex items-center space-x-2">
+                          <span>{engine.name}</span>
+                          {engine.free && (
+                            <Badge variant="secondary" className="text-xs">
+                              Free
+                            </Badge>
+                          )}
+                          {engine.requiresKey && !hasKey && (
+                            <Badge variant="destructive" className="text-xs">
                               <Key className="h-3 w-3 mr-1" />
                               Key Required
                             </Badge>
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                              Click to add API key
-                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
-                            </div>
-                          </div>
-                        )}
-                        {engine.requiresKey && hasKey && (
-                          <Badge variant="default" className="text-xs">
-                            <Zap className="h-3 w-3 mr-1" />
-                            Ready
-                          </Badge>
-                        )}
-                      </Label>
-                    </div>
+                          )}
+                          {engine.requiresKey && hasKey && (
+                            <Badge variant="default" className="text-xs">
+                              <Zap className="h-3 w-3 mr-1" />
+                              Ready
+                            </Badge>
+                          )}
+                          {isAlreadySelected && (
+                            <Badge variant="outline" className="text-xs">
+                              Selected
+                            </Badge>
+                          )}
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+
+              {/* Selected Engines */}
+              {selectedEngines.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">
+                    Selected Engines:
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedEngines.map((engineId) => {
+                      const engine = AVAILABLE_ENGINES.find(
+                        (e) => e.id === engineId
+                      );
+                      if (!engine) return null;
+
+                      return (
+                        <div
+                          key={engineId}
+                          className="flex items-center space-x-2 bg-accent rounded-md px-3 py-2"
+                        >
+                          <span className="text-sm">{engine.name}</span>
+                          {engine.requiresKey && keys[engine.id] && (
+                            <Badge variant="default" className="text-xs">
+                              <Zap className="h-3 w-3 mr-1" />
+                              Ready
+                            </Badge>
+                          )}
+                          <Button
+                            variant="outline"
+                            size={"icon-sm"}
+                            className="h-5 w-5 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                            onClick={() => {
+                              form.setValue(
+                                "engines",
+                                selectedEngines.filter((e) => e !== engineId)
+                              );
+                            }}
+                          >
+                            <X className="h-2.5 w-2.5" />
+                          </Button>
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              )}
+
+              {/* Key Required Warning */}
+              {selectedEngines.some((engineId) => {
+                const engine = AVAILABLE_ENGINES.find((e) => e.id === engineId);
+                return engine?.requiresKey && !keys[engine.id];
+              }) && (
+                <div className="flex items-start space-x-2 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-md">
+                  <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400 mt-0.5" />
+                  <div className="text-sm text-orange-800 dark:text-orange-200">
+                    <p className="font-medium">API Keys Required</p>
+                    <p>
+                      Some selected engines require API keys. Go to{" "}
+                      <button
+                        type="button"
+                        onClick={() => navigateToSettings()}
+                        className="underline hover:no-underline"
+                      >
+                        Settings
+                      </button>{" "}
+                      to configure them.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
             {form.formState.errors.engines && (
               <p className="text-sm text-destructive">
@@ -283,13 +361,28 @@ export function ImageGeneratorForm({
             </div>
           )}
 
-          <Button type="submit" className="w-full" size="lg">
-            Generate{" "}
-            {form.watch("mediaType") === "images"
-              ? "Images"
-              : form.watch("mediaType") === "videos"
-              ? "Videos"
-              : "Audio"}
+          <Button type="submit" className="w-full" size="lg" disabled={loading}>
+            {loading ? (
+              <>
+                <Zap className="h-4 w-4 mr-2 animate-pulse" />
+                Generating{" "}
+                {form.watch("mediaType") === "images"
+                  ? "Images"
+                  : form.watch("mediaType") === "videos"
+                  ? "Videos"
+                  : "Audio"}
+                ...
+              </>
+            ) : (
+              <>
+                Generate{" "}
+                {form.watch("mediaType") === "images"
+                  ? "Images"
+                  : form.watch("mediaType") === "videos"
+                  ? "Videos"
+                  : "Audio"}
+              </>
+            )}
           </Button>
         </form>
       </CardContent>
