@@ -36,7 +36,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { AlertTriangle, Key, X, Zap, Square } from "lucide-react";
+import { AlertTriangle, Key, X, Square } from "lucide-react";
 import { AVAILABLE_ENGINES } from "@/constants/engines";
 import { IMAGE_SIZES, type GenerationForm } from "@/types";
 import { PromptSuggestions } from "@/components/PromptSuggestions";
@@ -79,7 +79,7 @@ export function ImageGeneratorForm({
     },
   });
 
-  // Load API keys from localStorage
+  // Load API keys and selected engines from localStorage
   useEffect(() => {
     const loadKeys = () => {
       const storedKeys = localStorage.getItem("apiKeys");
@@ -89,13 +89,25 @@ export function ImageGeneratorForm({
       }
     };
 
-    // Load keys on mount
+    const loadEngines = () => {
+      const storedEngines = localStorage.getItem("selectedEngines");
+      if (storedEngines) {
+        const parsedEngines = JSON.parse(storedEngines);
+        form.setValue("engines", parsedEngines);
+      }
+    };
+
+    // Load keys and engines on mount
     loadKeys();
+    loadEngines();
 
     // Listen for storage changes (when keys are updated in another tab/window)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "apiKeys") {
         loadKeys();
+      }
+      if (e.key === "selectedEngines") {
+        loadEngines();
       }
     };
 
@@ -112,7 +124,17 @@ export function ImageGeneratorForm({
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("apiKeysUpdated", handleCustomStorageChange);
     };
-  }, []);
+  }, [form]);
+
+  // Save selected engines to localStorage whenever they change
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "engines" && value.engines) {
+        localStorage.setItem("selectedEngines", JSON.stringify(value.engines));
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     onSubmit({
@@ -253,12 +275,6 @@ export function ImageGeneratorForm({
                               Key Required
                             </Badge>
                           )}
-                          {engine.requiresKey && hasKey && (
-                            <Badge variant="default" className="text-xs">
-                              <Zap className="h-3 w-3 mr-1" />
-                              Ready
-                            </Badge>
-                          )}
                           {isAlreadySelected && (
                             <Badge variant="outline" className="text-xs">
                               Selected
@@ -290,12 +306,6 @@ export function ImageGeneratorForm({
                           className="flex items-center space-x-2 bg-accent rounded-md px-3 py-2"
                         >
                           <span className="text-sm">{engine.name}</span>
-                          {engine.requiresKey && keys[engine.id] && (
-                            <Badge variant="default" className="text-xs">
-                              <Zap className="h-3 w-3 mr-1" />
-                              Ready
-                            </Badge>
-                          )}
                           <Button
                             variant="outline"
                             size={"icon-sm"}
@@ -379,7 +389,7 @@ export function ImageGeneratorForm({
             </div>
 
             <div className="flex flex-col gap-2 space-y-2">
-              <Label htmlFor="numImages">Number of Images (per engine)</Label>
+              <Label htmlFor="numImages">Number of Images</Label>
               <Slider
                 id="numImages"
                 min={1}

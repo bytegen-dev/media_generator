@@ -51,18 +51,76 @@ export function ResultsGrid({
 
   const downloadImage = async (url: string, engine: string) => {
     try {
-      const response = await fetch(url);
+      // Use proxy API to bypass CORS issues
+      const proxyUrl = `/api/download?url=${encodeURIComponent(url)}`;
+      const response = await fetch(proxyUrl);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.download = `${engine}-image.png`;
+      link.download = `${engine}-image-${Math.random()
+        .toString(36)
+        .substr(2, 9)}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
-      console.error("Download failed:", error);
+      console.error("Proxy download failed, trying direct method:", error);
+
+      // Fallback: Try direct download
+      try {
+        const response = await fetch(url, {
+          mode: "cors",
+          credentials: "omit",
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = `${engine}-image-${Math.random()
+          .toString(36)
+          .substr(2, 9)}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+      } catch (directError) {
+        console.error(
+          "Direct download also failed, trying fallback:",
+          directError
+        );
+
+        // Final fallback: Open image in new tab for manual download
+        try {
+          const newWindow = window.open(url, "_blank");
+          if (!newWindow) {
+            // If popup blocked, create a temporary link
+            const link = document.createElement("a");
+            link.href = url;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }
+        } catch (fallbackError) {
+          console.error("All download methods failed:", fallbackError);
+          alert(
+            "Download failed. Please right-click on the image and select 'Save image as...' to download manually."
+          );
+        }
+      }
     }
   };
 
