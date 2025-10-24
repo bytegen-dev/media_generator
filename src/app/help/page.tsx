@@ -203,10 +203,7 @@ export default function HelpPage() {
         <CardContent>
           <div className="grid md:grid-cols-3 gap-4">
             <div className="text-center p-4 border rounded-lg">
-              <Image
-                className="h-8 w-8 mx-auto mb-2 text-blue-500"
-                alt="Images icon"
-              />
+              <Image className="h-8 w-8 mx-auto mb-2 text-blue-500" />
               <h3 className="font-semibold">Images</h3>
               <p className="text-sm text-muted-foreground">
                 Generate high-quality images from text prompts
