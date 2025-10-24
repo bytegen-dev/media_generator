@@ -5,13 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -178,14 +172,50 @@ export function SettingsForm({ focusKey }: { focusKey?: string | null }) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Key className="h-5 w-5" />
-            <span>API Keys</span>
-          </CardTitle>
-          <CardDescription>
-            Configure your API keys for premium media generation engines. Keys
-            are stored locally in your browser.
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center space-x-2">
+                <Key className="h-5 w-5" />
+                <span>API Keys</span>
+              </CardTitle>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button type="submit" form="settings-form" size="sm">
+                {saved ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Saved!
+                  </>
+                ) : (
+                  "Save Keys"
+                )}
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm" type="button">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Reset All
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Reset All API Keys</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete all your saved API keys. This
+                      action cannot be undone. Are you sure you want to
+                      continue?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleResetAll}>
+                      Yes, Reset All
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {/* Search & Filter Engines */}
@@ -238,7 +268,11 @@ export function SettingsForm({ focusKey }: { focusKey?: string | null }) {
 
           <Separator className="my-6" />
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            id="settings-form"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6"
+          >
             {filteredEngines.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Search className="h-8 w-8 mx-auto mb-2" />
@@ -302,44 +336,6 @@ export function SettingsForm({ focusKey }: { focusKey?: string | null }) {
                   start generating media immediately!
                 </p>
               </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Button type="submit" className="flex-1">
-                {saved ? (
-                  <>
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Saved!
-                  </>
-                ) : (
-                  "Save Keys"
-                )}
-              </Button>
-
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" type="button">
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Reset All
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Reset All API Keys</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will permanently delete all your saved API keys. This
-                      action cannot be undone. Are you sure you want to
-                      continue?
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleResetAll}>
-                      Yes, Reset All
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
             </div>
           </form>
         </CardContent>
