@@ -32,6 +32,12 @@ export default function Home() {
     setSessionId(null);
   };
 
+  const handleStopGeneration = () => {
+    setIsGenerating(false);
+    setSessionId(null);
+    clearResults();
+  };
+
   return (
     <div className="max-w-7xl mx-auto">
       <div className="text-center mb-8">
@@ -57,6 +63,7 @@ export default function Home() {
         <div>
           <ImageGeneratorForm
             onSubmit={handleGenerate}
+            onStop={handleStopGeneration}
             loading={isGenerating}
           />
         </div>

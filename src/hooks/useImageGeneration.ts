@@ -45,7 +45,7 @@ export function useImageGeneration() {
         throw error;
       }
     },
-    []
+    [pollForResults]
   );
 
   const pollForResults = useCallback(async (sessionId: string) => {

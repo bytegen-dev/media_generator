@@ -76,7 +76,19 @@ export function SettingsForm({ focusKey }: { focusKey?: string | null }) {
     const storedKeys = localStorage.getItem("apiKeys");
     if (storedKeys) {
       const keys = JSON.parse(storedKeys);
-      form.reset(keys);
+
+      const formData = {
+        xaiKey: keys.xai || "",
+        openaiKey: keys.openai || "",
+        midjourneyKey: keys.midjourney || "",
+        cloudflareToken: keys.cloudflare || "",
+        cloudflareAccountId: keys.cloudflareAccountId || "",
+        huggingfaceKey: keys.huggingface || "",
+        geminiKey: keys.gemini || "",
+        modelslabKey: keys.modelslab || "",
+      };
+
+      form.reset(formData);
     }
   }, [form]);
 
@@ -95,7 +107,7 @@ export function SettingsForm({ focusKey }: { focusKey?: string | null }) {
   }, [focusKey]);
 
   const onSubmit = (data: SettingsForm) => {
-    // Store keys in localStorage
+    // Store keys in localStorage with the correct field names
     const apiKeys = {
       xai: data.xaiKey,
       openai: data.openaiKey,
@@ -107,7 +119,12 @@ export function SettingsForm({ focusKey }: { focusKey?: string | null }) {
       modelslab: data.modelslabKey,
     };
 
+    console.log("Saving keys to localStorage:", apiKeys);
     localStorage.setItem("apiKeys", JSON.stringify(apiKeys));
+
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new CustomEvent("apiKeysUpdated"));
+
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

@@ -24,10 +24,23 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { AlertTriangle, Key, X, Zap } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { AlertTriangle, Key, X, Zap, Square } from "lucide-react";
 import { AVAILABLE_ENGINES } from "@/constants/engines";
 import { IMAGE_SIZES, type GenerationForm } from "@/types";
 import { PromptSuggestions } from "@/components/PromptSuggestions";
+import Link from "next/link";
 
 const MEDIA_TYPES = [
   { id: "images", name: "Images", isDisabled: false },
@@ -45,9 +58,11 @@ const formSchema = z.object({
 
 export function ImageGeneratorForm({
   onSubmit,
+  onStop,
   loading = false,
 }: {
   onSubmit: (data: GenerationForm) => void;
+  onStop?: () => void;
   loading?: boolean;
 }) {
   const [keys, setKeys] = useState<Record<string, string>>({});
@@ -66,13 +81,42 @@ export function ImageGeneratorForm({
 
   // Load API keys from localStorage
   useEffect(() => {
-    const storedKeys = localStorage.getItem("apiKeys");
-    if (storedKeys) {
-      setKeys(JSON.parse(storedKeys));
-    }
+    const loadKeys = () => {
+      const storedKeys = localStorage.getItem("apiKeys");
+      if (storedKeys) {
+        const parsedKeys = JSON.parse(storedKeys);
+        console.log("Loaded keys from localStorage:", parsedKeys);
+        setKeys(parsedKeys);
+      }
+    };
+
+    // Load keys on mount
+    loadKeys();
+
+    // Listen for storage changes (when keys are updated in another tab/window)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "apiKeys") {
+        loadKeys();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    // Also listen for custom events (when keys are updated in the same tab)
+    const handleCustomStorageChange = () => {
+      loadKeys();
+    };
+
+    window.addEventListener("apiKeysUpdated", handleCustomStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("apiKeysUpdated", handleCustomStorageChange);
+    };
   }, []);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log("Submitting with keys:", keys);
     onSubmit({
       ...values,
       keys,
@@ -167,8 +211,17 @@ export function ImageGeneratorForm({
               <Select
                 value=""
                 onValueChange={(engineId) => {
-                  if (engineId && !selectedEngines.includes(engineId)) {
-                    form.setValue("engines", [...selectedEngines, engineId]);
+                  if (engineId) {
+                    if (selectedEngines.includes(engineId)) {
+                      // Remove engine if already selected
+                      form.setValue(
+                        "engines",
+                        selectedEngines.filter((e) => e !== engineId)
+                      );
+                    } else {
+                      // Add engine if not selected
+                      form.setValue("engines", [...selectedEngines, engineId]);
+                    }
                   }
                 }}
               >
@@ -187,7 +240,7 @@ export function ImageGeneratorForm({
                       <SelectItem
                         key={engine.id}
                         value={engine.id}
-                        disabled={!canSelect || isAlreadySelected}
+                        disabled={!canSelect}
                       >
                         <div className="flex items-center space-x-2">
                           <span>{engine.name}</span>
@@ -295,6 +348,16 @@ export function ImageGeneratorForm({
               </p>
             )}
           </div>
+          <div className="text-center">
+            <p className="text-xs text-muted-foreground">
+              to use engines that require api keys. add api keys in{" "}
+              <Link href={"/settings"} className="text-primary">
+                /settings
+              </Link>
+            </p>
+          </div>
+
+          <Separator className="my-6" />
 
           {/* Settings */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -317,25 +380,23 @@ export function ImageGeneratorForm({
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="numImages">Number of Images</Label>
-              <Select
-                value={form.watch("numImages").toString()}
-                onValueChange={(value) =>
-                  form.setValue("numImages", parseInt(value))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {[1, 2, 3, 4].map((num) => (
-                    <SelectItem key={num} value={num.toString()}>
-                      {num} image{num > 1 ? "s" : ""}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex flex-col gap-2 space-y-2">
+              <Label htmlFor="numImages">Number of Images (per engine)</Label>
+              <Slider
+                id="numImages"
+                min={1}
+                max={4}
+                step={1}
+                value={[form.watch("numImages")]}
+                onValueChange={(value) => form.setValue("numImages", value[0])}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+              </div>
             </div>
           </div>
 
@@ -361,29 +422,72 @@ export function ImageGeneratorForm({
             </div>
           )}
 
-          <Button type="submit" className="w-full" size="lg" disabled={loading}>
+          <div className="w-full flex gap-2">
             {loading ? (
               <>
-                <Zap className="h-4 w-4 mr-2 animate-pulse" />
-                Generating{" "}
-                {form.watch("mediaType") === "images"
-                  ? "Images"
-                  : form.watch("mediaType") === "videos"
-                  ? "Videos"
-                  : "Audio"}
-                ...
+                <Button
+                  type="submit"
+                  className="flex-1"
+                  size="lg"
+                  disabled={true}
+                >
+                  Generating{" "}
+                  {form.watch("mediaType") === "images"
+                    ? "Images"
+                    : form.watch("mediaType") === "videos"
+                    ? "Videos"
+                    : "Audio"}
+                  ...
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="lg"
+                      className="px-4"
+                    >
+                      <Square className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Stop Generation?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will abruptly stop the current generation process.
+                        Any images that are already being generated may still
+                        complete, but no new images will be generated. This
+                        action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Continue Generation</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={onStop}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Stop Generation
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </>
             ) : (
-              <>
+              <Button
+                type="submit"
+                className="w-full"
+                size="lg"
+                disabled={loading}
+              >
                 Generate{" "}
                 {form.watch("mediaType") === "images"
                   ? "Images"
                   : form.watch("mediaType") === "videos"
                   ? "Videos"
                   : "Audio"}
-              </>
+              </Button>
             )}
-          </Button>
+          </div>
         </form>
       </CardContent>
     </Card>

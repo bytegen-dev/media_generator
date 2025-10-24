@@ -118,8 +118,8 @@ export function PromptSuggestions({
 
       <div className="text-center">
         <p className="text-xs text-muted-foreground">
-          Select a prompt from the dropdown or click "Random Prompt" for a
-          random selection
+          Select a prompt from the dropdown or click &quot;Random Prompt&quot;
+          for a random selection
         </p>
       </div>
     </div>
